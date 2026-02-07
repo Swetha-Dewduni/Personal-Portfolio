@@ -1,76 +1,83 @@
-// Smooth scrolling for navigation links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
-            behavior: 'smooth'
+document.addEventListener('DOMContentLoaded', () => {
+    // --- 1. TYPING EFFECT ---
+    const textElement = document.getElementById("typing-text");
+    const nameStr = "Swetha Dewduni";
+    let index = 0;
+
+    function typeEffect() {
+        if (textElement && index < nameStr.length) {
+            textElement.textContent += nameStr.charAt(index);
+            index++;
+            setTimeout(typeEffect, 150);
+        }
+    }
+
+    if (textElement) {
+        textElement.textContent = ""; 
+        typeEffect();
+    }
+
+    // --- 2. HERO ENTRANCE ANIMATION ---
+    const heroContent = document.querySelector('.hero-content');
+    const heroImage = document.querySelector('.hero-image');
+
+    if (heroContent && heroImage) {
+        heroContent.style.opacity = '0';
+        heroContent.style.transform = 'translateX(-50px)';
+        heroImage.style.opacity = '0';
+        heroImage.style.transform = 'translateX(50px)';
+
+        setTimeout(() => {
+            heroContent.style.transition = 'all 1s ease-out';
+            heroContent.style.opacity = '1';
+            heroContent.style.transform = 'translateX(0)';
+
+            heroImage.style.transition = 'all 1s ease-out';
+            heroImage.style.opacity = '1';
+            heroImage.style.transform = 'translateX(0)';
+        }, 200);
+    }
+
+    // --- 3. GLOBAL REVEAL ANIMATION (Skills, Projects, & Contact) ---
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = "1";
+                entry.target.style.transform = "translateY(0)";
+            }
+        });
+    }, { threshold: 0.15 });
+
+    // This selects all cards and the contact area to animate them as you scroll
+    const elementsToReveal = document.querySelectorAll('.skill-card, .project-card, .contact-container');
+
+    elementsToReveal.forEach(el => {
+        el.style.opacity = "0";
+        el.style.transform = "translateY(30px)";
+        el.style.transition = "all 0.6s ease-out";
+        revealObserver.observe(el);
+    });
+
+    // --- 4. SMOOTH SCROLLING ---
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
         });
     });
-});
 
-// A little greeting for fellow devs
-console.log("%c Welcome to my AI Portfolio! ", "background: #38bdf8; color: #0f172a; font-weight: bold;");
+    // --- 5. CONTACT FORM ---
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert("Thanks for reaching out, Swetha! Your message was sent successfully.");
+            contactForm.reset();
+        });
+    }
 
-// Simple animation observer for skill cards
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = 1;
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-});
-
-document.querySelectorAll('.skill-card').forEach(card => {
-    card.style.opacity = 0;
-    card.style.transform = 'translateY(20px)';
-    card.style.transition = 'all 0.5s ease-out';
-    observer.observe(card);
-});
-
-const contactForm = document.getElementById('contact-form');
-
-contactForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    
-    // In a real scenario, you'd use a service like Formspree or EmailJS here
-    alert("Thanks for reaching out! This form is currently a demo, but your message was 'sent' successfully.");
-    contactForm.reset();
-});
-
-// Add the about section to the scroll observer
-const aboutSection = document.querySelector('.about-container');
-aboutSection.style.opacity = 0;
-aboutSection.style.transform = 'translateY(30px)';
-aboutSection.style.transition = 'all 0.8s ease-out';
-
-const aboutObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = 1;
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-});
-
-aboutObserver.observe(aboutSection);
-
-window.addEventListener('DOMContentLoaded', () => {
-    const content = document.querySelector('.hero-content');
-    const image = document.querySelector('.hero-image');
-
-    content.style.opacity = '0';
-    content.style.transform = 'translateX(-50px)';
-    image.style.opacity = '0';
-    image.style.transform = 'translateX(50px)';
-
-    setTimeout(() => {
-        content.style.transition = 'all 1s ease-out';
-        content.style.opacity = '1';
-        content.style.transform = 'translateX(0)';
-
-        image.style.transition = 'all 1s ease-out';
-        image.style.opacity = '1';
-        image.style.transform = 'translateX(0)';
-    }, 200);
+    console.log("%c AI Portfolio Loaded Successfully ", "background: #38bdf8; color: #0f172a; font-weight: bold;");
 });
